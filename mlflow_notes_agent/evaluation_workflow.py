@@ -1,9 +1,8 @@
-"""Compare two prompt versions on the same MLflow evaluation dataset."""
+"""Evaluate a candidate prompt, optionally alongside a baseline version."""
 
 from __future__ import annotations
 
 import argparse
-import os
 
 import mlflow
 
@@ -33,9 +32,9 @@ def evaluate_prompt(dataset, prompt_version: int, judge_model_uri: str | None = 
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Compare two mortgage prompt versions.")
+    parser = argparse.ArgumentParser(description="Evaluate a mortgage prompt, optionally comparing it with a baseline.")
     parser.add_argument("--dataset-name", required=True)
-    parser.add_argument("--baseline-version", type=int, required=True)
+    parser.add_argument("--baseline-version", type=int, help="Also evaluate this baseline version.")
     parser.add_argument("--candidate-version", type=int, required=True)
     parser.add_argument("--judge-model-uri")
     args = parser.parse_args()
@@ -43,8 +42,9 @@ def main() -> None:
     mlflow.set_experiment(get_settings().mlflow_experiment)
     dataset = mlflow.genai.datasets.get_dataset(name=args.dataset_name)
 
-    baseline = evaluate_prompt(dataset, args.baseline_version, args.judge_model_uri)
-    candidate = evaluate_prompt(dataset, args.candidate_version, args.judge_model_uri)
+    if args.baseline_version is not None:
+        baseline = evaluate_prompt(dataset, args.baseline_version, args.judge_model_uri)
+        print(f"Baseline run:  {baseline.run_id} {baseline.metrics}")
 
-    print(f"Baseline run:  {baseline.run_id} {baseline.metrics}")
+    candidate = evaluate_prompt(dataset, args.candidate_version, args.judge_model_uri)
     print(f"Candidate run: {candidate.run_id} {candidate.metrics}")
