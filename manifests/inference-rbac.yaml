@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: fsi-mortgage-agent-qwen
+  namespace: llm-inference
+rules:
+  - apiGroups: [serving.kserve.io]
+    resources: [llminferenceservices]
+    resourceNames: [qwen3-14b]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: fsi-mortgage-agent-qwen
+  namespace: llm-inference
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: fsi-mortgage-agent-qwen
+subjects:
+  - kind: ServiceAccount
+    name: fsi-mortgage-agent
+    namespace: mlflow-demo

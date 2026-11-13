@@ -177,22 +177,30 @@ oc project mlflow-demo
 
 Create the application Secret from `.env`. The namespaced Kubernetes auth provider
 derives the workspace from the service-account namespace, so exclude
-`MLFLOW_WORKSPACE` from the pod Secret:
+`MLFLOW_WORKSPACE` from the pod Secret. Also exclude the local inference credential:
+the backend reads its rotating service-account token instead.
 
 ```bash
-grep -v '^MLFLOW_WORKSPACE=' .env \
+grep -Ev '^(MLFLOW_WORKSPACE|LLM_API_KEY|LLM_API_KEY_FILE)=' .env \
   | oc create secret generic fsi-mortgage-agent-env \
       --from-env-file=/dev/stdin \
       --dry-run=client -o yaml \
   | oc apply -f -
 ```
 
-Replace `your-org` in the image name below and in `manifests/sandbox.yaml` with
-your Quay organization. Then build, push, and deploy:
+The Kustomize image mapping defaults to `quay.io/hukhan/mlflow-rhoai-demo:latest`
+for both Sandbox containers. Set a different repository or tag through the logical
+image name `mlflow-rhoai-demo`; no edits to `sandbox.yaml` are needed:
 
 ```bash
-podman build -t quay.io/your-org/mlflow-rhoai-demo:latest .
-podman push quay.io/your-org/mlflow-rhoai-demo:latest
+IMAGE=quay.io/hukhan/mlflow-rhoai-demo:latest
+podman build -t "$IMAGE" .
+podman push "$IMAGE"
+(
+  cd manifests
+  kustomize edit set image "mlflow-rhoai-demo=$IMAGE"
+)
+kustomize build manifests
 oc apply -k manifests
 oc wait --for=condition=Ready sandbox/fsi-mortgage-agent -n mlflow-demo --timeout=5m
 ```
@@ -204,8 +212,30 @@ oc get route fsi-mortgage-agent-ui -n mlflow-demo -o jsonpath='https://{.spec.ho
 ```
 
 The application uses a dedicated service account and the Kubernetes-backed MLflow
-authorization plugin. The in-memory LangGraph server is intended for this demo rather
-than production use.
+authorization plugin. The backend also authenticates Qwen requests with that
+service account: `LLM_API_KEY_FILE` points to the projected Kubernetes token, which
+is reread for every synchronous and asynchronous HTTP request so token rotation
+does not require a restart. File-based authentication takes precedence over
+`LLM_API_KEY` and fails if the file is unreadable or empty.
+
+`manifests/inference-rbac.yaml` grants the agent service account only `get` on
+`llm-inference/qwen3-14b` (`LLMInferenceService`), which the Gateway AuthPolicy
+requires for inference. Applying these cross-namespace Role/RoleBinding resources
+requires permission to manage RBAC in `llm-inference`. Adjust that manifest if the
+model or its namespace changes. The projected token's audience must match the
+Gateway AuthPolicy; the default Kubernetes API audience matches this cluster.
+
+For an existing deployment, remove an old `LLM_API_KEY` entry from the application
+Secret after deploying the updated image. `LLM_API_KEY_FILE` overrides it during
+the rollout. External judge keys such as `OPENAI_API_KEY` or `GEMINI_API_KEY` are
+separate and remain in the application Secret.
+
+When updating an existing Sandbox, verify the managed pod adopts the new image
+and environment. If the existing pod remains unchanged after applying the
+template, run `oc delete pod fsi-mortgage-agent -n mlflow-demo` and wait for its
+replacement to become Ready. This interrupts active demo requests.
+
+The in-memory LangGraph server is intended for this demo rather than production use.
 
 ## Important files
 

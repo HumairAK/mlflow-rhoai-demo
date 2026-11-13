@@ -1,0 +1,6 @@
+# Sandbox pod templates need an explicit image field for the image transformer.
+images:
+  - group: agents.x-k8s.io
+    version: v1beta1
+    kind: Sandbox
+    path: spec/podTemplate/spec/containers/image

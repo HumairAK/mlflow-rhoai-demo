@@ -1,8 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - sandbox.yaml
-  - serviceaccount.yaml
-  - service.yaml
-  - route.yaml
-  - workspace-rbac.yaml
+- sandbox.yaml
+- serviceaccount.yaml
+- service.yaml
+- route.yaml
+- workspace-rbac.yaml
+- inference-rbac.yaml
+configurations:
+- kustomizeconfig.yaml
+images:
+- name: mlflow-rhoai-demo
+  newName: quay.io/hukhan/mlflow-rhoai-demo
+  newTag: sa-auth-20261113

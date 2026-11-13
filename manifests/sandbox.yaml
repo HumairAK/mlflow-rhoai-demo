@@ -17,7 +17,7 @@ spec:
       serviceAccountName: fsi-mortgage-agent
       containers:
         - name: backend
-          image: quay.io/your-org/mlflow-rhoai-demo:latest
+          image: mlflow-rhoai-demo:latest
           imagePullPolicy: Always
           command:
             - /opt/app-root/src/.venv/bin/mlflow-fsi-agent-serve
@@ -34,6 +34,8 @@ spec:
             - secretRef:
                 name: fsi-mortgage-agent-env
           env:
+            - name: LLM_API_KEY_FILE
+              value: /var/run/secrets/kubernetes.io/serviceaccount/token
             - name: BG_JOB_ISOLATED_LOOPS
               value: "true"
           readinessProbe:
@@ -49,7 +51,7 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 20
         - name: ui
-          image: quay.io/your-org/mlflow-rhoai-demo:latest
+          image: mlflow-rhoai-demo:latest
           imagePullPolicy: Always
           command: ["node", "ui/server.js"]
           ports:

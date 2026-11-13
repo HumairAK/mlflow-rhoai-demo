@@ -23,6 +23,7 @@ DEFAULT_LLM_MODEL = "RedHatAI/Qwen3-14B-quantized.w4a16"
 class Settings:
     llm_base_url: str
     llm_api_key: str
+    llm_api_key_file: str
     llm_model: str
     mlflow_experiment: str
     judge_model_uri: str
@@ -37,6 +38,7 @@ def get_settings() -> Settings:
     return Settings(
         llm_base_url=llm_base_url,
         llm_api_key=_clean_env("LLM_API_KEY", "not-needed"),
+        llm_api_key_file=_clean_env("LLM_API_KEY_FILE"),
         llm_model=llm_model,
         mlflow_experiment=_clean_env("MLFLOW_EXPERIMENT", "fsi-mortgage-demo"),
         judge_model_uri=_clean_env("JUDGE_MODEL_URI", f"gemini:/{gemini_model}"),
