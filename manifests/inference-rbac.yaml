@@ -22,3 +22,18 @@ subjects:
   - kind: ServiceAccount
     name: fsi-mortgage-agent
     namespace: mlflow-demo
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: my-mlflow-demo-llm-access
+  namespace: llm-inference
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: fsi-mortgage-agent-qwen
+subjects:
+  - kind: ServiceAccount
+    name: my-mlflow-demo
+    namespace: mlflow-demo
