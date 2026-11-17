@@ -1,3 +1,28 @@
+
+UPDATE EXPERIMENT ID
+
+oc whoami -t | oc exec -i \
+  -n redhat-ods-applications deployment/mlflow -c mlflow -- \
+  sh -ec '
+    read -r MLFLOW_TRACKING_TOKEN
+    export MLFLOW_TRACKING_TOKEN
+    export MLFLOW_TRACKING_AUTH=kubernetes
+    export MLFLOW_TRACKING_URI=https://mlflow.redhat-ods-applications.svc:8443/mlflow
+    export MLFLOW_TRACKING_SERVER_CERT_PATH=/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+    export MLFLOW_ENABLE_WORKSPACES=true
+    export MLFLOW_WORKSPACE_STORE_URI=kubernetes://
+    export MLFLOW_HTTP_REQUEST_MAX_RETRIES=2
+    export MLFLOW_HTTP_REQUEST_TIMEOUT=20
+
+    mlflow gc \
+      --backend-store-uri="$MLFLOW_BACKEND_STORE_URI" \
+      --workspace mlflow-demo \
+      --experiment-ids 7
+  '
+oc delete pod fsi-mortgage-agent -n mlflow-demo
+source setup/mlflow-env.sh
+uv run mlflow-fsi-agent-prompts seed
+
 # URLS:
 
 Chat Agent: https://fsi-mortgage-agent-ui-mlflow-demo.apps.rosa.hukhan-10.fcu6.p3.openshiftapps.com
