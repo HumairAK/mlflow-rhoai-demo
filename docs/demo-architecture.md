@@ -1,40 +1,22 @@
 # Demo architecture
 
-The workspace is scoped to the project, while the MLflow service is shared.
-The workspace box represents logical ownership, not physical storage in the
-namespace. The shared MLflow server uses PostgreSQL and MinIO for persistence;
-those storage services are omitted from this slide.
+![Mortgage agent architecture: project-scoped MLflow workspace, Qwen inference, evaluation clients, and the shared MLflow service.](demo-architecture.png)
 
-```mermaid
-flowchart LR
-    Browser["Browser"]
-    CLI["Judging CLI"]
-    OpenAI["OpenAI API<br/>Evaluation judge"]
+[Download slide image — PNG, 3200 × 1800](demo-architecture.png) ·
+[Editable vector — SVG](demo-architecture.svg)
 
-    subgraph Demo["mlflow-demo namespace"]
-        Agent["Mortgage Agent"]
-        WB["Workbench"]
-        Workspace["MLflow workspace: mlflow-demo<br/>Experiments · Traces · Evals · Prompts"]
-    end
+The slide emphasizes three connections: the agent calls Qwen, logs traces to its
+MLflow workspace, and loads its production prompt from that workspace. A workbench
+or local CLI evaluates traces with an external OpenAI judge.
 
-    subgraph Inference["llm-inference namespace"]
-        Qwen["KServe → llm-d → vLLM<br/>Qwen"]
-    end
+The workspace represents logical ownership by project `mlflow-demo`, not physical
+storage in that namespace. The shared MLflow service runs in
+`redhat-ods-applications` and uses PostgreSQL and MinIO for persistence; those
+storage services are omitted from the slide. The workbench runs in `mlflow-demo`;
+the CLI runs on the user's laptop. The browser provides chat access and MLflow's
+UI for inspecting results and managing prompts.
 
-    subgraph Platform["redhat-ods-applications namespace"]
-        MLflow["Shared MLflow Server"]
-    end
-
-    Browser -->|"Chat"| Agent
-    Browser -->|"View results / Manage prompts"| Workspace
-    Agent -->|"Inference"| Qwen
-    Agent -->|"Load prompt / Log traces"| Workspace
-    WB -->|"Evaluate"| Workspace
-    CLI -->|"Read traces / Save scores"| Workspace
-    CLI -->|"Judge responses"| OpenAI
-    Workspace -.->|"Served by"| MLflow
-```
-
-The agent loads its prompt from the workspace's MLflow Prompt Registry using
-`mortgage-lending-agent@production`. Moving the alias selects the prompt version
-used by the deployed agent after its short cache expires.
+The agent loads `mortgage-lending-agent@production` from the workspace's Prompt
+Registry. Moving the alias selects the prompt version used by the deployed agent
+after its short cache expires. ServiceAccount identity and RBAC govern the agent's
+access to MLflow and Qwen.

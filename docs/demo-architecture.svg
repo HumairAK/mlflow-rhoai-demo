@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">Mortgage agent architecture on Red Hat OpenShift AI</title>
+<desc id="desc">The mortgage agent and project-scoped MLflow workspace belong to mlflow-demo. The agent logs traces and loads the production prompt from its workspace, and calls Qwen through KServe, llm-d, and vLLM in llm-inference. A workbench or local CLI evaluates traces with an external OpenAI judge. The logical workspace is served by shared MLflow in redhat-ods-applications.</desc>
+<defs>
+<marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#3266ac" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#137c75" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="arrow-purple" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#7661ad" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#728399" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="#f8fafc" stroke="none" stroke-width="1.4"/>
+<rect x="64" y="30" width="48" height="5" rx="2" fill="#d52b2b" stroke="none" stroke-width="1.4"/>
+<text x="64" y="91" font-family="Red Hat Display, sans-serif" font-size="43" font-weight="700" fill="#203249" text-anchor="start">A mortgage agent, connected to MLflow</text>
+<text x="64" y="131" font-family="Red Hat Text, sans-serif" font-size="24" font-weight="400" fill="#627187" text-anchor="start">Chat. Trace. Evaluate. Improve the prompt.</text>
+<rect x="1254" y="53" width="282" height="38" rx="19" fill="#edf1f6" stroke="none" stroke-width="1.4"/>
+<text x="1395" y="78" font-family="Red Hat Text, sans-serif" font-size="17" font-weight="600" fill="#203249" text-anchor="middle">Red Hat OpenShift AI</text>
+<rect x="56" y="238" width="1000" height="338" rx="28" fill="#d5e4f2" stroke="#afc6dc" stroke-width="1.4"/>
+<text x="88" y="274" font-family="Red Hat Text, sans-serif" font-size="15" font-weight="700" fill="#4c6c90" text-anchor="start" letter-spacing="1.4">YOUR PROJECT</text>
+<text x="252" y="274" font-family="Source Code Pro, sans-serif" font-size="17" font-weight="400" fill="#4c6c90" text-anchor="start">mlflow-demo</text>
+<path d="M392 312 V222 Q392 210 404 210 H1324 Q1336 210 1336 222 V299" fill="none" stroke="#7661ad" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-purple)"/>
+<rect x="723" y="188" width="180" height="34" rx="8" fill="#f8fafc" stroke="none" stroke-width="1.4"/>
+<text x="813" y="211" font-family="Red Hat Text, sans-serif" font-size="19" font-weight="500" fill="#69569b" text-anchor="middle">Call the model</text>
+<rect x="88" y="317" width="344" height="210" rx="22" fill="#e7ecf3" stroke="none" stroke-width="1.4"/>
+<rect x="88" y="312" width="344" height="210" rx="22" fill="#fff" stroke="#cddff1" stroke-width="1.4"/>
+<rect x="112" y="336" width="44" height="44" rx="12" fill="#eaf2fc" stroke="none" stroke-width="1.4"/>
+<g transform="translate(118.0 342.0) scale(1.0)" stroke="#3266ac" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M7 7h18a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H14l-6 4v-4H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3Z"/><path d="M10 13h12M10 18h8"/>
+</g>
+<text x="112" y="408" font-family="Red Hat Display, sans-serif" font-size="29" font-weight="700" fill="#203249" text-anchor="start">Mortgage agent</text>
+<text x="112" y="441" font-family="Red Hat Text, sans-serif" font-size="19" font-weight="400" fill="#627187" text-anchor="start">Chat UI + LangChain agent</text>
+<rect x="112" y="469" width="230" height="29" rx="14" fill="#edf4fa" stroke="none" stroke-width="1.4"/>
+<text x="127" y="489" font-family="Red Hat Text, sans-serif" font-size="15" font-weight="600" fill="#41678d" text-anchor="start">ServiceAccount + RBAC</text>
+<rect x="670" y="307" width="354" height="235" rx="22" fill="#e7ecf3" stroke="none" stroke-width="1.4"/>
+<rect x="670" y="302" width="354" height="235" rx="22" fill="#ffffff" stroke="#bcded8" stroke-width="1.4"/>
+<rect x="694" y="326" width="44" height="44" rx="12" fill="#e7f4f0" stroke="none" stroke-width="1.4"/>
+<g transform="translate(700.0 332.0) scale(1.0)" stroke="#137c75" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<rect x="4" y="6" width="24" height="21" rx="3"/><path d="M4 12h24M10 18h5M10 22h11"/><circle cx="8" cy="9" r=".6" fill="currentColor" stroke="none"/>
+</g>
+<text x="694" y="398" font-family="Red Hat Display, sans-serif" font-size="28" font-weight="700" fill="#203249" text-anchor="start">MLflow workspace</text>
+<text x="694" y="427" font-family="Source Code Pro, sans-serif" font-size="19" font-weight="400" fill="#137c75" text-anchor="start">mlflow-demo</text>
+<text x="694" y="463" font-family="Red Hat Text, sans-serif" font-size="18" font-weight="400" fill="#627187" text-anchor="start">Traces · evaluations · prompts</text>
+<text x="694" y="495" font-family="Source Code Pro, sans-serif" font-size="16" font-weight="400" fill="#425d69" text-anchor="start">mortgage-lending-agent</text>
+<text x="694" y="519" font-family="Source Code Pro, sans-serif" font-size="16" font-weight="700" fill="#137c75" text-anchor="start">@production</text>
+<path d="M447 385 H654" fill="none" stroke="#3266ac" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<text x="550" y="368" font-family="Red Hat Text, sans-serif" font-size="19" font-weight="500" fill="#3266ac" text-anchor="middle">Log traces</text>
+<path d="M654 468 H447" fill="none" stroke="#137c75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<text x="550" y="450" font-family="Red Hat Text, sans-serif" font-size="19" font-weight="500" fill="#137c75" text-anchor="middle">Load prompt</text>
+<text x="1160" y="274" font-family="Red Hat Text, sans-serif" font-size="15" font-weight="700" fill="#7661ad" text-anchor="start" letter-spacing="1.4">MODEL SERVING</text>
+<rect x="1160" y="317" width="352" height="210" rx="22" fill="#e7ecf3" stroke="none" stroke-width="1.4"/>
+<rect x="1160" y="312" width="352" height="210" rx="22" fill="#fff" stroke="#dbd2ec" stroke-width="1.4"/>
+<rect x="1184" y="336" width="44" height="44" rx="12" fill="#f0ebf8" stroke="none" stroke-width="1.4"/>
+<g transform="translate(1190.0 342.0) scale(1.0)" stroke="#7661ad" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<rect x="8" y="8" width="16" height="16" rx="3"/><path d="M12 3v5M20 3v5M12 24v5M20 24v5M3 12h5M3 20h5M24 12h5M24 20h5"/><path d="m12 17 3 3 6-8"/>
+</g>
+<text x="1184" y="408" font-family="Red Hat Display, sans-serif" font-size="29" font-weight="700" fill="#203249" text-anchor="start">Qwen inference</text>
+<text x="1184" y="441" font-family="Red Hat Text, sans-serif" font-size="19" font-weight="400" fill="#627187" text-anchor="start">KServe → llm-d → vLLM</text>
+<rect x="1184" y="469" width="164" height="29" rx="14" fill="#f0edf8" stroke="none" stroke-width="1.4"/>
+<text x="1199" y="489" font-family="Source Code Pro, sans-serif" font-size="15" font-weight="400" fill="#7661ad" text-anchor="start">llm-inference</text>
+<path d="M278 677 V639 Q278 625 292 625 H766 Q780 625 780 611 V551" fill="none" stroke="#137c75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<rect x="425" y="606" width="175" height="34" rx="8" fill="#f8fafc" stroke="none" stroke-width="1.4"/>
+<text x="512" y="629" font-family="Red Hat Text, sans-serif" font-size="18" font-weight="500" fill="#137c75" text-anchor="middle">Evaluate traces</text>
+<path d="M1038 485 H1076 Q1090 485 1090 499 V751 Q1090 765 1104 765 H1145" fill="none" stroke="#8b99aa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-gray)" stroke-dasharray="5 7"/>
+<text x="1110" y="618" font-family="Red Hat Text, sans-serif" font-size="17" font-weight="400" fill="#728399" text-anchor="start">Served by</text>
+<text x="88" y="668" font-family="Red Hat Text, sans-serif" font-size="15" font-weight="700" fill="#728399" text-anchor="start" letter-spacing="1.4">EVALUATION</text>
+<rect x="88" y="695" width="380" height="150" rx="22" fill="#e7ecf3" stroke="none" stroke-width="1.4"/>
+<rect x="88" y="690" width="380" height="150" rx="22" fill="#fff" stroke="#91a4b9" stroke-width="1.8"/>
+<rect x="112" y="710" width="36" height="36" rx="12" fill="#eef2f7" stroke="none" stroke-width="1.4"/>
+<g transform="translate(116.9090909090909 714.9090909090909) scale(0.8181818181818182)" stroke="#4c6c90" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<rect x="6" y="5" width="20" height="17" rx="2"/><path d="M3 26h26l-3-4H6ZM12 11l-3 3 3 3M16 17h5"/>
+</g>
+<text x="163" y="737" font-family="Red Hat Display, sans-serif" font-size="25" font-weight="700" fill="#203249" text-anchor="start">Workbench + CLI</text>
+<text x="112" y="777" font-family="Red Hat Text, sans-serif" font-size="18" font-weight="400" fill="#627187" text-anchor="start">Run scorers &amp; compare prompts</text>
+<text x="112" y="811" font-family="Red Hat Text, sans-serif" font-size="14" font-weight="400" fill="#728399" text-anchor="start">Notebook in project · CLI on your laptop</text>
+<path d="M482 765 H635" fill="none" stroke="#728399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<text x="559" y="747" font-family="Red Hat Text, sans-serif" font-size="16" font-weight="400" fill="#627187" text-anchor="middle">Judge responses</text>
+<rect x="650" y="695" width="374" height="150" rx="22" fill="#e7ecf3" stroke="none" stroke-width="1.4"/>
+<rect x="650" y="690" width="374" height="150" rx="22" fill="#fff" stroke="#91a4b9" stroke-width="1.8"/>
+<rect x="674" y="710" width="36" height="36" rx="12" fill="#faf1df" stroke="none" stroke-width="1.4"/>
+<g transform="translate(678.9090909090909 714.9090909090909) scale(0.8181818181818182)" stroke="#95733b" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="m16 3 3.5 8 8.5 4-8.5 4-3.5 9-3.5-9L4 15l8.5-4Z"/>
+</g>
+<text x="725" y="737" font-family="Red Hat Display, sans-serif" font-size="25" font-weight="700" fill="#203249" text-anchor="start">OpenAI judge</text>
+<text x="674" y="777" font-family="Red Hat Text, sans-serif" font-size="18" font-weight="400" fill="#627187" text-anchor="start">Score pricing &amp; response quality</text>
+<text x="674" y="811" font-family="Red Hat Text, sans-serif" font-size="14" font-weight="400" fill="#728399" text-anchor="start">External API</text>
+<text x="1160" y="668" font-family="Red Hat Text, sans-serif" font-size="15" font-weight="700" fill="#728399" text-anchor="start" letter-spacing="1.4">SHARED PLATFORM</text>
+<rect x="1160" y="695" width="352" height="150" rx="22" fill="#e7ecf3" stroke="none" stroke-width="1.4"/>
+<rect x="1160" y="690" width="352" height="150" rx="22" fill="#fff" stroke="#91a4b9" stroke-width="1.8"/>
+<rect x="1184" y="710" width="36" height="36" rx="12" fill="#eef2f7" stroke="none" stroke-width="1.4"/>
+<g transform="translate(1188.909090909091 714.9090909090909) scale(0.8181818181818182)" stroke="#4c6c90" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<rect x="5" y="4" width="22" height="10" rx="3"/><rect x="5" y="18" width="22" height="10" rx="3"/><path d="M10 9h.1M10 23h.1M16 9h6M16 23h6"/>
+</g>
+<text x="1235" y="737" font-family="Red Hat Display, sans-serif" font-size="25" font-weight="700" fill="#203249" text-anchor="start">Shared MLflow</text>
+<text x="1184" y="777" font-family="Red Hat Text, sans-serif" font-size="18" font-weight="400" fill="#627187" text-anchor="start">Serves your workspace</text>
+<text x="1184" y="811" font-family="Source Code Pro, sans-serif" font-size="14" font-weight="400" fill="#728399" text-anchor="start">redhat-ods-applications</text>
+<text x="88" y="880" font-family="Red Hat Text, sans-serif" font-size="17" font-weight="400" fill="#728399" text-anchor="start">Your project owns the workspace. The shared MLflow service stores and serves its data.</text>
+</svg>

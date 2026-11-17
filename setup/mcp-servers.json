@@ -1,0 +1,1030 @@
+{
+  "workspace": "mlflow-demo",
+  "servers": [
+    {
+      "name": "com.mongodb/mongodb-mcp-server",
+      "display_name": "com.mongodb/mongodb-mcp-server",
+      "description": "Interact with MongoDB databases and MongoDB Atlas. Provides database operations, Atlas cluster management, performance analysis, and query execution capabilities.",
+      "icons": [
+        {
+          "src": "https://rh-ai.apps.rosa.hukhan-10.fcu6.p3.openshiftapps.com/model-registry/api/v1/mcp_catalog/mcp_servers/11/logo?namespace=rhoai-model-registries"
+        }
+      ],
+      "tags": {
+        "catalog.source.id": "community_mcp_servers"
+      },
+      "aliases": [],
+      "versions": [
+        {
+          "server_json": {
+            "name": "com.mongodb/mongodb-mcp-server",
+            "version": "1.0.0",
+            "title": "MongoDB MCP Server",
+            "description": "Interact with MongoDB databases and MongoDB Atlas. Provides database operations, Atlas cluster management, performance analysis, and query execution capabilities.",
+            "packages": [
+              {
+                "registryType": "oci",
+                "identifier": "quay.io/rhoai-partner-mcp/ubi10-mongodb-mcp-server:450a14399cc7bd6c7d633e7a44d32b80a7694b73",
+                "transport": {
+                  "type": "streamable-http",
+                  "url": "http://localhost:9002/mcp"
+                },
+                "environmentVariables": [
+                  {
+                    "name": "MDB_MCP_CONNECTION_STRING",
+                    "description": "MongoDB connection URI (from secret mongodb-credentials)",
+                    "isRequired": true,
+                    "isSecret": true
+                  },
+                  {
+                    "name": "MDB_MCP_API_CLIENT_ID",
+                    "description": "MongoDB Atlas Service Account client ID (from secret mongodb-atlas-credentials)",
+                    "isRequired": false,
+                    "isSecret": true
+                  },
+                  {
+                    "name": "MDB_MCP_API_CLIENT_SECRET",
+                    "description": "MongoDB Atlas Service Account client secret (from secret mongodb-atlas-credentials)",
+                    "isRequired": false,
+                    "isSecret": true
+                  }
+                ],
+                "packageArguments": [
+                  {
+                    "name": "--transport",
+                    "type": "named",
+                    "value": "http"
+                  },
+                  {
+                    "name": "--httpHost",
+                    "type": "named",
+                    "value": "0.0.0.0"
+                  },
+                  {
+                    "name": "--httpPort",
+                    "type": "named",
+                    "value": "9002"
+                  },
+                  {
+                    "name": "--readOnly",
+                    "type": "named"
+                  }
+                ],
+                "runtimeHint": "docker"
+              }
+            ],
+            "repository": {
+              "url": "https://github.com/mongodb-js/mongodb-mcp-server",
+              "source": "github"
+            },
+            "websiteUrl": "https://www.mongodb.com/docs/mcp-server/get-started/",
+            "_meta": {
+              "com.redhat/deploy-spec": {
+                "config": {
+                  "arguments": [
+                    "--transport",
+                    "http",
+                    "--httpHost",
+                    "0.0.0.0",
+                    "--httpPort",
+                    "9002",
+                    "--readOnly"
+                  ],
+                  "env": [
+                    {
+                      "name": "MDB_MCP_CONNECTION_STRING",
+                      "value": "<MDB_MCP_CONNECTION_STRING>"
+                    },
+                    {
+                      "name": "MDB_MCP_CONNECTION_STRING",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "connection-string",
+                          "name": "mongodb-credentials"
+                        }
+                      }
+                    },
+                    {
+                      "name": "MDB_MCP_API_CLIENT_ID",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "api-client-id",
+                          "name": "mongodb-atlas-credentials"
+                        }
+                      }
+                    },
+                    {
+                      "name": "MDB_MCP_API_CLIENT_SECRET",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "api-client-secret",
+                          "name": "mongodb-atlas-credentials"
+                        }
+                      }
+                    }
+                  ],
+                  "path": "/mcp",
+                  "port": 9002
+                },
+                "source": {
+                  "containerImage": {
+                    "ref": "quay.io/rhoai-partner-mcp/ubi10-mongodb-mcp-server:450a14399cc7bd6c7d633e7a44d32b80a7694b73"
+                  },
+                  "type": "ContainerImage"
+                }
+              }
+            },
+            "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
+          },
+          "status": "active",
+          "source": "https://github.com/mongodb-js/mongodb-mcp-server",
+          "tools": [
+            {
+              "name": "find",
+              "title": null,
+              "description": "Run a find query against a MongoDB collection",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "aggregate",
+              "title": null,
+              "description": "Run an aggregation against a MongoDB collection",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "list-databases",
+              "title": null,
+              "description": "List all databases for a MongoDB connection",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "list-collections",
+              "title": null,
+              "description": "List all collections for a given database",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "collection-schema",
+              "title": null,
+              "description": "Describe the schema for a collection",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "collection-indexes",
+              "title": null,
+              "description": "Describe the indexes for a collection",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "collection-storage-size",
+              "title": null,
+              "description": "Get storage size information for a collection",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "connect",
+              "title": null,
+              "description": "Establish connection to MongoDB instance",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "count",
+              "title": null,
+              "description": "Count documents in a collection",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "db-stats",
+              "title": null,
+              "description": "Retrieve database statistics",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "explain",
+              "title": null,
+              "description": "Explain query execution plan",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "export",
+              "title": null,
+              "description": "Export data from MongoDB collection",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "mongodb-logs",
+              "title": null,
+              "description": "Retrieve MongoDB server logs",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "list-knowledge-sources",
+              "title": null,
+              "description": "List available knowledge sources",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "search-knowledge",
+              "title": null,
+              "description": "Search across knowledge sources",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            }
+          ],
+          "connect_options": {},
+          "tags": {}
+        }
+      ],
+      "access_endpoints": []
+    },
+    {
+      "name": "com.redhat/openshift-mcp-server",
+      "display_name": "com.redhat/openshift-mcp-server",
+      "description": "MCP server for Red Hat OpenShift and Kubernetes cluster management. Allows agents to inspect pods, workloads, nodes, and cluster resources, view logs and events, and browse configuration using direct Kubernetes API access. Tools listed below reflect the default read-only configuration with core and config toolsets enabled.",
+      "icons": [
+        {
+          "src": "https://rh-ai.apps.rosa.hukhan-10.fcu6.p3.openshiftapps.com/model-registry/api/v1/mcp_catalog/mcp_servers/4/logo?namespace=rhoai-model-registries"
+        }
+      ],
+      "tags": {
+        "catalog.source.id": "rh_mcp_servers"
+      },
+      "aliases": [],
+      "versions": [
+        {
+          "server_json": {
+            "name": "com.redhat/openshift-mcp-server",
+            "version": "0.4.0",
+            "title": "OpenShift MCP Server",
+            "description": "MCP server for Red Hat OpenShift and Kubernetes cluster management. Allows agents to inspect pods, workloads, nodes, and cluster resources, view logs and events, and browse configuration using direct Kubernetes API access. Tools listed below reflect the default read-only configuration with core and config toolsets enabled.",
+            "packages": [
+              {
+                "registryType": "oci",
+                "identifier": "registry.redhat.io/openshift-mcp-tech-preview/openshift-mcp-server-rhel9:0.4",
+                "transport": {
+                  "type": "streamable-http",
+                  "url": "http://localhost:8080/mcp"
+                },
+                "packageArguments": [
+                  {
+                    "name": "--config",
+                    "type": "named",
+                    "value": "/etc/mcp-config/config.toml"
+                  }
+                ],
+                "runtimeHint": "docker"
+              }
+            ],
+            "repository": {
+              "url": "https://github.com/openshift/openshift-mcp-server",
+              "source": "github"
+            },
+            "websiteUrl": "https://docs.redhat.com/en/documentation/openshift_container_platform",
+            "_meta": {
+              "com.redhat/deploy-spec": {
+                "config": {
+                  "arguments": [
+                    "--config",
+                    "/etc/mcp-config/config.toml"
+                  ],
+                  "path": "/mcp",
+                  "port": 8080,
+                  "storage": [
+                    {
+                      "path": "/etc/mcp-config",
+                      "source": {
+                        "configMap": {
+                          "name": "openshift-mcp-server-config"
+                        },
+                        "type": "ConfigMap"
+                      }
+                    }
+                  ]
+                },
+                "runtime": {
+                  "security": {
+                    "serviceAccountName": "mcp-viewer"
+                  }
+                },
+                "source": {
+                  "containerImage": {
+                    "ref": "registry.redhat.io/openshift-mcp-tech-preview/openshift-mcp-server-rhel9:0.4"
+                  },
+                  "type": "ContainerImage"
+                }
+              }
+            },
+            "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
+          },
+          "status": "active",
+          "source": "https://github.com/openshift/openshift-mcp-server",
+          "tools": [
+            {
+              "name": "pods_list",
+              "title": null,
+              "description": "List all pods across namespaces or filtered by label/field selectors",
+              "inputSchema": {
+                "properties": {
+                  "fieldSelector": {
+                    "description": "Field selector to filter pods",
+                    "type": "string"
+                  },
+                  "labelSelector": {
+                    "description": "Label selector to filter pods",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "pods_get",
+              "title": null,
+              "description": "Get detailed information about a specific pod",
+              "inputSchema": {
+                "properties": {
+                  "name": {
+                    "description": "Name of the pod",
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "description": "Kubernetes namespace",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "pods_log",
+              "title": null,
+              "description": "Retrieve logs from a pod",
+              "inputSchema": {
+                "properties": {
+                  "container": {
+                    "description": "Container name (optional if pod has only one container)",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "Name of the pod",
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "description": "Kubernetes namespace",
+                    "type": "string"
+                  },
+                  "previous": {
+                    "description": "Return logs from the previous container instance",
+                    "type": "boolean"
+                  },
+                  "tail": {
+                    "description": "Number of lines to return from the end of the log (default 100)",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "pods_list_in_namespace",
+              "title": null,
+              "description": "List pods in a specific namespace",
+              "inputSchema": {
+                "properties": {
+                  "fieldSelector": {
+                    "description": "Field selector to filter pods",
+                    "type": "string"
+                  },
+                  "labelSelector": {
+                    "description": "Label selector to filter pods",
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "description": "Kubernetes namespace",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "namespace"
+                ],
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "pods_top",
+              "title": null,
+              "description": "Pod CPU and memory usage via Metrics Server",
+              "inputSchema": {
+                "properties": {
+                  "all_namespaces": {
+                    "description": "Show metrics across all namespaces (default true)",
+                    "type": "boolean"
+                  },
+                  "label_selector": {
+                    "description": "Label selector to filter pods",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "Name of a specific pod",
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "description": "Kubernetes namespace",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "namespaces_list",
+              "title": null,
+              "description": "List all namespaces in the cluster",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "projects_list",
+              "title": null,
+              "description": "List OpenShift projects (OpenShift clusters only)",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "nodes_log",
+              "title": null,
+              "description": "Get kubelet and system logs from a node",
+              "inputSchema": {
+                "properties": {
+                  "name": {
+                    "description": "Name of the node",
+                    "type": "string"
+                  },
+                  "query": {
+                    "description": "Log query filter",
+                    "type": "string"
+                  },
+                  "tailLines": {
+                    "description": "Number of lines to return from the end (default 100)",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "name",
+                  "query"
+                ],
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "nodes_stats_summary",
+              "title": null,
+              "description": "Detailed node resource usage stats from kubelet Summary API",
+              "inputSchema": {
+                "properties": {
+                  "name": {
+                    "description": "Name of the node",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "nodes_top",
+              "title": null,
+              "description": "Node CPU and memory usage via Metrics Server",
+              "inputSchema": {
+                "properties": {
+                  "label_selector": {
+                    "description": "Label selector to filter nodes",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "Name of a specific node",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "events_list",
+              "title": null,
+              "description": "List cluster events in a namespace or across all namespaces",
+              "inputSchema": {
+                "properties": {
+                  "namespace": {
+                    "description": "Kubernetes namespace (omit for all namespaces)",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "resources_get",
+              "title": null,
+              "description": "Get a specific Kubernetes resource by apiVersion, kind, and name",
+              "inputSchema": {
+                "properties": {
+                  "apiVersion": {
+                    "description": "API version of the resource (e.g. apps/v1)",
+                    "type": "string"
+                  },
+                  "kind": {
+                    "description": "Kind of the resource (e.g. Deployment)",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "Name of the resource",
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "description": "Kubernetes namespace (omit for cluster-scoped resources)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "apiVersion",
+                  "kind",
+                  "name"
+                ],
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "resources_list",
+              "title": null,
+              "description": "List Kubernetes resources by apiVersion and kind",
+              "inputSchema": {
+                "properties": {
+                  "apiVersion": {
+                    "description": "API version of the resource (e.g. apps/v1)",
+                    "type": "string"
+                  },
+                  "fieldSelector": {
+                    "description": "Field selector to filter resources",
+                    "type": "string"
+                  },
+                  "kind": {
+                    "description": "Kind of the resource (e.g. Deployment)",
+                    "type": "string"
+                  },
+                  "labelSelector": {
+                    "description": "Label selector to filter resources",
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "description": "Kubernetes namespace (omit for cluster-scoped resources)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "apiVersion",
+                  "kind"
+                ],
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "configuration_view",
+              "title": null,
+              "description": "View the current kubeconfig configuration",
+              "inputSchema": {
+                "properties": {
+                  "minified": {
+                    "description": "Return current context only (true) or all contexts (false)",
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "configuration_contexts_list",
+              "title": null,
+              "description": "List kubeconfig context names and server URLs",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            }
+          ],
+          "connect_options": {},
+          "tags": {}
+        }
+      ],
+      "access_endpoints": []
+    },
+    {
+      "name": "io.confluent/mcp-confluent",
+      "display_name": "io.confluent/mcp-confluent",
+      "description": "Manage Confluent Cloud resources through the Confluent Cloud REST API. Provides cluster management, environment management, connector operations, and billing cost visibility.",
+      "icons": [
+        {
+          "src": "https://rh-ai.apps.rosa.hukhan-10.fcu6.p3.openshiftapps.com/model-registry/api/v1/mcp_catalog/mcp_servers/3/logo?namespace=rhoai-model-registries"
+        }
+      ],
+      "tags": {
+        "catalog.source.id": "rh_partner_mcp_servers"
+      },
+      "aliases": [],
+      "versions": [
+        {
+          "server_json": {
+            "name": "io.confluent/mcp-confluent",
+            "version": "1.0.0",
+            "title": "Confluent MCP Server",
+            "description": "Manage Confluent Cloud resources through the Confluent Cloud REST API. Provides cluster management, environment management, connector operations, and billing cost visibility.",
+            "packages": [
+              {
+                "registryType": "oci",
+                "identifier": "quay.io/rhoai-partner-mcp/ubi10-confluentinc-mcp-confluent:79e94f5f27a982f7baf84de11ac0ea5b279f07fa",
+                "transport": {
+                  "type": "streamable-http",
+                  "url": "http://localhost:8080/mcp"
+                },
+                "environmentVariables": [
+                  {
+                    "name": "CONFLUENT_CLOUD_API_KEY",
+                    "description": "Master API key for Confluent Cloud (from secret confluent-cloud-credentials)",
+                    "isRequired": true,
+                    "isSecret": true
+                  },
+                  {
+                    "name": "CONFLUENT_CLOUD_API_SECRET",
+                    "description": "Master API secret for Confluent Cloud (from secret confluent-cloud-credentials)",
+                    "isRequired": true,
+                    "isSecret": true
+                  },
+                  {
+                    "name": "MCP_API_KEY",
+                    "description": "API key for HTTP/SSE authentication (generate using --generate-key)",
+                    "isRequired": false,
+                    "isSecret": true
+                  },
+                  {
+                    "name": "MCP_ALLOWED_HOSTS",
+                    "description": "Comma-separated list of allowed Host header values for DNS rebinding protection",
+                    "isRequired": true
+                  },
+                  {
+                    "name": "HTTP_HOST",
+                    "description": "Host to bind for HTTP transport (defaults to localhost for security)",
+                    "isRequired": true
+                  },
+                  {
+                    "name": "HTTP_PORT",
+                    "description": "HTTP port for the server",
+                    "isRequired": false
+                  }
+                ],
+                "runtimeHint": "docker"
+              }
+            ],
+            "repository": {
+              "url": "https://github.com/confluentinc/mcp-confluent",
+              "source": "github"
+            },
+            "websiteUrl": "https://github.com/confluentinc/mcp-confluent",
+            "_meta": {
+              "com.redhat/deploy-spec": {
+                "config": {
+                  "env": [
+                    {
+                      "name": "CONFLUENT_CLOUD_API_KEY",
+                      "value": "<CONFLUENT_CLOUD_API_KEY>"
+                    },
+                    {
+                      "name": "CONFLUENT_CLOUD_API_SECRET",
+                      "value": "<CONFLUENT_CLOUD_API_SECRET>"
+                    },
+                    {
+                      "name": "MCP_API_KEY",
+                      "value": "<MCP_API_KEY>"
+                    },
+                    {
+                      "name": "MCP_ALLOWED_HOSTS",
+                      "value": "<MCP_ALLOWED_HOSTS>"
+                    },
+                    {
+                      "name": "HTTP_HOST",
+                      "value": "<HTTP_HOST>"
+                    },
+                    {
+                      "name": "HTTP_PORT",
+                      "value": "<HTTP_PORT>"
+                    },
+                    {
+                      "name": "CONFLUENT_CLOUD_API_KEY",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "api-key",
+                          "name": "confluent-cloud-credentials"
+                        }
+                      }
+                    },
+                    {
+                      "name": "CONFLUENT_CLOUD_API_SECRET",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "api-secret",
+                          "name": "confluent-cloud-credentials"
+                        }
+                      }
+                    }
+                  ],
+                  "path": "/mcp",
+                  "port": 8080
+                },
+                "source": {
+                  "containerImage": {
+                    "ref": "quay.io/rhoai-partner-mcp/ubi10-confluentinc-mcp-confluent:79e94f5f27a982f7baf84de11ac0ea5b279f07fa"
+                  },
+                  "type": "ContainerImage"
+                }
+              }
+            },
+            "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
+          },
+          "status": "active",
+          "source": "https://github.com/confluentinc/mcp-confluent",
+          "tools": [
+            {
+              "name": "list-connectors",
+              "title": null,
+              "description": "List Kafka connectors",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "read-connector",
+              "title": null,
+              "description": "Read connector configuration",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "delete-connector",
+              "title": null,
+              "description": "Delete a Kafka connector",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "list-clusters",
+              "title": null,
+              "description": "List Confluent Cloud clusters",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "list-environments",
+              "title": null,
+              "description": "List Confluent Cloud environments",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "read-environment",
+              "title": null,
+              "description": "Read environment details",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            },
+            {
+              "name": "list-billing-costs",
+              "title": null,
+              "description": "List billing costs for Confluent Cloud",
+              "inputSchema": {
+                "properties": {},
+                "type": "object"
+              },
+              "outputSchema": null,
+              "annotations": null,
+              "icons": null,
+              "execution": null
+            }
+          ],
+          "connect_options": {},
+          "tags": {}
+        }
+      ],
+      "access_endpoints": []
+    }
+  ]
+}

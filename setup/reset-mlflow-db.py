@@ -17,6 +17,8 @@ DB_NS = 'mlflow-demo-db'
 DB_DEPLOYMENT = 'postgresql'
 MLFLOW = 'mlflow'
 OPERATOR = 'mlflow-operator-controller-manager'
+AGENT_NS = 'mlflow-demo'
+AGENT = 'fsi-mortgage-agent'
 FORCE = 'mlflow.opendatahub.io/force-migrate'
 COMMAND_ERROR = 'Command failed; credentials and command output are suppressed.'
 
@@ -122,6 +124,9 @@ def migration_jobs():
 def snapshot():
     cr = get('mlflows.mlflow.opendatahub.io', MLFLOW)
     spec = cr['spec']
+    sandbox = get('sandboxes.agents.x-k8s.io', AGENT, AGENT_NS)
+    if sandbox['spec'].get('operatingMode', 'Running') != 'Running':
+        raise RuntimeError('Agent Sandbox must be Running before resetting the database.')
     if FORCE in cr['metadata'].get('annotations', {}):
         raise RuntimeError('A forced migration is already requested; finish it first.')
     ref = spec.get('backendStoreUriFrom', {})
@@ -152,6 +157,7 @@ def snapshot():
         'context': oc('config', 'current-context').strip(),
         'server': oc('config', 'view', '--minify', '-o', 'jsonpath={.clusters[0].cluster.server}').strip(),
         'mlflow_uid': cr['metadata']['uid'],
+        'agent_sandbox_uid': sandbox['metadata']['uid'],
         'database': info,
         'operator': {'name': OPERATOR, 'replicas': operator['spec'].get('replicas', 1),
                      'selector': selector(operator)},
@@ -200,12 +206,107 @@ def quiesce(state, timeout):
              lambda: database_info()['other_connections'] == 0, timeout)
 
 
+def restart_agent(state, path, timeout):
+    sandbox = get('sandboxes.agents.x-k8s.io', AGENT, AGENT_NS)
+    if sandbox['metadata']['uid'] != state.get('agent_sandbox_uid', sandbox['metadata']['uid']):
+        raise RuntimeError('Agent Sandbox was replaced; review before resuming the restart.')
+    if sandbox['spec'].get('operatingMode', 'Running') != 'Running':
+        raise RuntimeError('Agent Sandbox must be Running before its pod can be restarted.')
+
+    def agent_pod():
+        pods = get('pods', namespace=AGENT_NS, selector='app=' + AGENT)['items']
+        pod = next((p for p in pods if p['metadata']['name'] == AGENT), None)
+        if pod and not owned(pod, sandbox['metadata']['uid']):
+            raise RuntimeError('Agent pod is not owned by the expected Sandbox; refusing restart.')
+        return pod
+
+    pod = agent_pod()
+    if 'agent_restart' not in state:
+        state['agent_restart'] = {
+            'sandbox_uid': sandbox['metadata']['uid'],
+            'old_pod_uid': pod['metadata']['uid'] if pod else None,
+        }
+        # Save the old UID before deleting so resume never deletes the replacement.
+        save(state, path)
+    restart = state['agent_restart']
+    if restart['sandbox_uid'] != sandbox['metadata']['uid']:
+        raise RuntimeError('Agent Sandbox was replaced; review before resuming the restart.')
+    if pod and pod['metadata']['uid'] == restart['old_pod_uid']:
+        print('Restarting agent pod to clear the cached MLflow experiment ID...', flush=True)
+        oc('delete', 'pod', AGENT, '-n', AGENT_NS, '--wait=false', '--ignore-not-found=true')
+
+    def replacement_ready():
+        pod = agent_pod()
+        return (pod is not None and not pod['metadata'].get('deletionTimestamp')
+                and pod['metadata']['uid'] != restart['old_pod_uid']
+                and any(c['type'] == 'Ready' and c['status'] == 'True'
+                        for c in pod.get('status', {}).get('conditions', [])))
+
+    wait_for('Waiting for the Sandbox operator to recreate a ready agent pod...',
+             replacement_ready, timeout)
+
+
+def seed_agent_prompt():
+    print('Seeding the baseline prompt and setting its production alias...', flush=True)
+    # Reuse v1 on resume if registration succeeded before the command was interrupted.
+    code = '''
+import mlflow
+from mlflow.exceptions import MlflowException
+from mlflow_notes_agent.prompt_workflow import (
+    BASELINE_PROMPT, PROMPT_NAME, PROMPT_ALIAS, seed_baseline,
+)
+
+uri = f"prompts:/{PROMPT_NAME}/1"
+try:
+    prompt = mlflow.genai.load_prompt(uri)
+except MlflowException as exc:
+    if exc.error_code != "RESOURCE_DOES_NOT_EXIST":
+        raise
+    seed_baseline()
+    prompt = mlflow.genai.load_prompt(uri)
+if prompt.template != BASELINE_PROMPT:
+    raise RuntimeError("Prompt v1 is not the expected baseline; refusing to change production.")
+mlflow.genai.set_prompt_alias(PROMPT_NAME, PROMPT_ALIAS, prompt.version)
+print(f"Baseline v{prompt.version} is ready at @{PROMPT_ALIAS}.")
+'''
+    oc('exec', '-i', '-n', AGENT_NS, AGENT, '-c', 'backend', '--',
+       '/opt/app-root/src/.venv/bin/python', '-', payload=code)
+
+
+def finish_reset(state, path, timeout):
+    if state['phase'] == 'restarting-agent':
+        restart_agent(state, path, timeout)
+        state['phase'] = 'seeding-prompt'
+        save(state, path)
+    if state['phase'] == 'seeding-prompt':
+        seed_agent_prompt()
+        state['phase'] = 'seeding-skills'
+        save(state, path)
+    if state['phase'] == 'seeding-skills':
+        from seed_mlflow_skills import seed_skills
+
+        seed_skills()
+        state['phase'] = 'seeding-mcp-servers'
+        save(state, path)
+    from seed_mlflow_mcp_servers import seed_mcp_servers
+
+    seed_mcp_servers()
+    state['phase'] = 'complete'
+    save(state, path)
+    print('Reset complete. Agent restarted; baseline prompt selected at @production; '
+          'skills and MCP server registrations restored. '
+          'MinIO retained. Refresh the browser and start a fresh chat.')
+
+
 def recover(state, path, timeout):
     cr = get('mlflows.mlflow.opendatahub.io', MLFLOW)
     if cr['metadata']['uid'] != state['mlflow_uid']:
         raise RuntimeError('MLflow resource has been replaced; do not resume this state file.')
     if state['operator']['replicas'] < 1:
         raise RuntimeError('Original operator replicas were zero; resume requires a running operator.')
+    if state.get('phase') in {'restarting-agent', 'seeding-prompt', 'seeding-skills', 'seeding-mcp-servers'}:
+        finish_reset(state, path, timeout)
+        return
     if state.get('phase') != 'migrating':
         state['old_migration_uids'] = [p['metadata']['uid'] for p in migration_jobs()]
         state['phase'] = 'requesting-migration'
@@ -232,9 +333,9 @@ def recover(state, path, timeout):
         patch('deployment', d['name'], {'spec': {'replicas': d['replicas']}})
     for cj in state['cronjobs']:
         patch('cronjob', cj['name'], {'spec': {'suspend': cj['suspend']}})
-    state['phase'] = 'complete'
+    state['phase'] = 'restarting-agent'
     save(state, path)
-    print('Reset complete. MinIO and agent/chat state were not cleared. Seed the baseline prompt once.')
+    finish_reset(state, path, timeout)
 
 
 def main():
@@ -266,6 +367,10 @@ def main():
         state = snapshot()
         print(json.dumps(state, indent=2), flush=True)
         print('DESTRUCTIVE: all MLflow workspaces, traces, prompts, datasets, runs and models in this DB will be erased.')
+        print('After migration, the agent pod in mlflow-demo will be restarted to clear its cached experiment ID.')
+        print('The baseline prompt will then be seeded in the agent workspace and selected by @production.')
+        print('Mock mortgage skills will be registered in mlflow-demo using your current oc identity.')
+        print('Saved MCP catalog registrations will then be restored in the same workspace.')
         if not args.execute:
             print('DRY RUN ONLY. No resources or data were changed.')
             return

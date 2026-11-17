@@ -1,16 +1,31 @@
+# URLS:
+
+Chat Agent: https://fsi-mortgage-agent-ui-mlflow-demo.apps.rosa.hukhan-10.fcu6.p3.openshiftapps.com
+Arch diagram: https://raw.githubusercontent.com/HumairAK/mlflow-rhoai-demo/refs/heads/main/docs/img.png
+Dashboard link: https://rh-ai.apps.rosa.hukhan-10.fcu6.p3.openshiftapps.com
+
+
 # Notebook name:
+
 my-mlflow-demo
 Jupyter | Data Science | CPU | Python 3.12
 
-
 # Reset mlflow
+
 python3 setup/reset-mlflow-db.py
 python3 setup/reset-mlflow-db.py --execute --confirm-database mlflow
 
+# Seed Prompt
+
+cd /home/hukhan/projects/github/humairak/mlflow-rhoai-demo
+source setup/mlflow-env.sh
+uv run mlflow-fsi-agent-prompts seed
+
+
+# Without auth to produce 401
 
 curl -q --fail-with-body --max-time 180 \
   "$LLM_BASE_URL/chat/completions" \
-  -H "Authorization: Bearer $(oc whoami -t)" \
   -H 'Content-Type: application/json' \
   -w '\nHTTP %{http_code}\n' \
   -d '{
@@ -20,9 +35,12 @@ curl -q --fail-with-body --max-time 180 \
     "chat_template_kwargs": {"enable_thinking": false}
   }'
 
-# Without auth to produce 401
+
+# CURL
+
 curl -q --fail-with-body --max-time 180 \
   "$LLM_BASE_URL/chat/completions" \
+  -H "Authorization: Bearer $(oc whoami -t)" \
   -H 'Content-Type: application/json' \
   -w '\nHTTP %{http_code}\n' \
   -d '{
@@ -95,4 +113,3 @@ result = mlflow.genai.evaluate(
 display(result.metrics)
 
 
-# Jupyter | Data Science | CPU | Python 3.12
